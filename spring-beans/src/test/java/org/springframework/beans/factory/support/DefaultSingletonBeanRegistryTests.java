@@ -38,6 +38,13 @@ class DefaultSingletonBeanRegistryTests {
 	@Test
 	void singletons() {
 		AtomicBoolean tbFlag = new AtomicBoolean();
+
+		/*
+		 * 第二个参数设置一个回调函数，在注册单例对象时调用，用于在单例对象创建后进行一些额外的操作。
+		 * 这个回调函数的作用是在单例对象创建后将 tbFlag 的值设置为 true。
+		 * 这样，在后续的测试中，我们可以通过检查 tbFlag 的值来验证是否成功调用了回调函数。
+		 * instance是consumer实例
+		 */
 		beanRegistry.addSingletonCallback("tb", instance -> tbFlag.set(true));
 		TestBean tb = new TestBean();
 		beanRegistry.registerSingleton("tb", tb);
