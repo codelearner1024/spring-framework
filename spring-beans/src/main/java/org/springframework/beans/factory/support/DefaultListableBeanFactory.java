@@ -1049,8 +1049,8 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	protected @Nullable Boolean isCurrentThreadAllowedToHoldSingletonLock() {
 		String mainThreadPrefix = this.mainThreadPrefix;
 		if (mainThreadPrefix != null) {
-			// We only differentiate in the preInstantiateSingletons phase, using
-			// the volatile mainThreadPrefix field as an indicator for that phase.
+			// We only differentiate(区分) in the preInstantiateSingletons phase(我们仅在预实例化单例对象阶段进行区分), using
+			// the volatile(volatile修饰的) mainThreadPrefix field as an indicator(指示器) for that phase(使用volatile修饰的主线程前缀字段作为该阶段的指示).
 
 			PreInstantiation preInstantiation = this.preInstantiationThread.get();
 			if (preInstantiation != null) {
@@ -1089,19 +1089,25 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 			logger.trace("Pre-instantiating singletons in " + this);
 		}
 
-		// Iterate over a copy to allow for init methods which in turn register new bean definitions.
-		// While this may not be part of the regular factory bootstrap, it does otherwise work fine.
+		// Iterate over a copy to allow for init methods(初始化方法:例如 InitializingBean 接口的 afterPropertiesSet 方法，或者通过 @PostConstruct 注解标记的方法)
+		// which in turn register new bean definitions.
+		// 上面的意思是迭代一个拷贝的副本,以避免初始化方法中可能出现的创建新beanDefinition,从而导致ConcurrentModificationException报错
+
+		// While this may not be part of the regular(常规) factory bootstrap(工厂启动), it does otherwise work fine(但确实其他方面工作良好).
 		List<String> beanNames = new ArrayList<>(this.beanDefinitionNames);
 
 		// Trigger initialization of all non-lazy singleton beans...
 		List<CompletableFuture<?>> futures = new ArrayList<>();
 
-		this.preInstantiationThread.set(PreInstantiation.MAIN);
-		this.mainThreadPrefix = getThreadNamePrefix();
+		// 这个标记会在后续代码里用于判断当前线程是否允许持有单例锁等操作。当预实例化操作结束后，
+		// 无论是否出现异常，都需要清除这个标记，以避免影响后续其他操作对线程状态的判断。
+		// 若不清除，可能会导致后续操作错误地认为当前线程仍处于预实例化阶段，从而引发逻辑错误。
+		this.preInstantiationThread.set(PreInstantiation.MAIN);//将当前线程标记为主线程
+		this.mainThreadPrefix = getThreadNamePrefix();// 截取线程的名称赋值给volatile修饰的字段
 		try {
 			for (String beanName : beanNames) {
 				RootBeanDefinition mbd = getMergedLocalBeanDefinition(beanName);
-				if (!mbd.isAbstract() && mbd.isSingleton()) {
+				if (!mbd.isAbstract() && mbd.isSingleton()) {//此处的抽象是一个标识位,并非指类是否是抽象的,具体看内部实现
 					CompletableFuture<?> future = preInstantiateSingleton(beanName, mbd);
 					if (future != null) {
 						futures.add(future);
@@ -1110,8 +1116,8 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 			}
 		}
 		finally {
-			this.mainThreadPrefix = null;
-			this.preInstantiationThread.remove();
+			this.mainThreadPrefix = null; // 表示预实例化阶段结束,所有预实例化阶段不能做的,现在都可以做了
+			this.preInstantiationThread.remove();//threadLocal 到此完成任务,删除自己,方便线程后续复用
 		}
 
 		if (!futures.isEmpty()) {
@@ -1123,7 +1129,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 			}
 		}
 
-		// Trigger post-initialization callback for all applicable beans...
+		// Trigger post-initialization callback for all applicable beans... 对所有适用的 Bean 触发初始化后的回调
 		for (String beanName : beanNames) {
 			Object singletonInstance = getSingleton(beanName, false);
 			if (singletonInstance instanceof SmartInitializingSingleton smartSingleton) {

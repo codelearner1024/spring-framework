@@ -256,7 +256,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 		Assert.notNull(beanName, "Bean name must not be null");
 
 		Thread currentThread = Thread.currentThread();
-		Boolean lockFlag = isCurrentThreadAllowedToHoldSingletonLock();
+		Boolean lockFlag = isCurrentThreadAllowedToHoldSingletonLock();	// 这个方法是用来判断当前线程是否可以持有单例锁的
 		boolean acquireLock = !Boolean.FALSE.equals(lockFlag);
 		boolean locked = (acquireLock && this.singletonLock.tryLock());
 
@@ -442,16 +442,16 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	}
 
 	/**
-	 * Determine whether the current thread is allowed to hold the singleton lock.
-	 * <p>By default, all threads are forced to hold a full lock through {@code null}.
+	 * Determine whether the current thread is allowed to hold the singleton lock(判断当前线程是否被允许持有单例锁).
+	 * <p>By default, all threads are forced to hold a full lock through {@code null}.默认情况下，所有线程都必须通过{@code null}持有完全锁。
 	 * {@link DefaultListableBeanFactory} overrides this to specifically handle its
-	 * threads during the pre-instantiation phase: {@code true} for the main thread,
-	 * {@code false} for managed background threads, and configuration-dependent
-	 * behavior for unmanaged threads.
-	 * @return {@code true} if the current thread is explicitly allowed to hold the
-	 * lock but also accepts lenient fallback behavior, {@code false} if it is
-	 * explicitly not allowed to hold the lock and therefore forced to use lenient
-	 * fallback behavior, or {@code null} if there is no specific indication
+	 * threads during the pre-instantiation phase(预实例化阶段): {@code true} for the main thread(对于主线程返回true),
+	 * {@code false} for managed background threads(托管的后台线程返回false), and configuration-dependent(取决于配置的)
+	 * behavior for unmanaged threads(非托管线程).
+	 * @return {@code true} if the current thread is explicitly (明确的) allowed to hold the
+	 * lock but also accepts lenient(宽松的) fallback behavior(回退行为), {@code false} if it is
+	 * explicitly not allowed to hold the lock and therefore(因此) forced(被迫) to use lenient
+	 * fallback behavior, or {@code null} if there is no specific indication(如果没有特定指示)
 	 * (traditional behavior: forced to always hold a full lock)
 	 * @since 6.2
 	 */

@@ -53,7 +53,7 @@ class DefaultSingletonBeanRegistryTests {
 
 		AtomicBoolean tb2Flag = new AtomicBoolean();
 		beanRegistry.addSingletonCallback("tb2", instance -> tb2Flag.set(true));
-		TestBean tb2 = (TestBean) beanRegistry.getSingleton("tb2", TestBean::new);
+		TestBean tb2 = (TestBean) beanRegistry.getSingleton("tb2", TestBean::new);// 这里会调用TestBean的无参构造函数
 		assertThat(beanRegistry.getSingleton("tb2")).isSameAs(tb2);
 		assertThat(tb2Flag.get()).isTrue();
 
