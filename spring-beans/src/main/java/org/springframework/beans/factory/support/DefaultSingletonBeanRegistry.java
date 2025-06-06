@@ -162,13 +162,13 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 			throw new IllegalStateException("Could not register object [" + singletonObject +
 					"] under bean name '" + beanName + "': there is already object [" + oldObject + "] bound");
 		}
-		this.singletonFactories.remove(beanName);
-		this.earlySingletonObjects.remove(beanName);
-		this.registeredSingletons.add(beanName);
+		this.singletonFactories.remove(beanName);//移除之前添加的工厂对象
+		this.earlySingletonObjects.remove(beanName);//移除之前添加的早期单例对象
+		this.registeredSingletons.add(beanName);//添加到已注册的单例集合中
 
 		Consumer<Object> callback = this.singletonCallbacks.get(beanName);
 		if (callback != null) {
-			callback.accept(singletonObject);
+			callback.accept(singletonObject);//执行之前添加的回调函数
 		}
 	}
 
@@ -257,7 +257,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 
 		Thread currentThread = Thread.currentThread();
 		Boolean lockFlag = isCurrentThreadAllowedToHoldSingletonLock();	// 这个方法是用来判断当前线程是否可以持有单例锁的
-		boolean acquireLock = !Boolean.FALSE.equals(lockFlag);
+		boolean acquireLock = !Boolean.FALSE.equals(lockFlag); //lockFlag = true/null acquireLock = true
 		boolean locked = (acquireLock && this.singletonLock.tryLock());
 
 		try {
@@ -537,7 +537,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 * @see #isSingletonCurrentlyInCreation
 	 */
 	protected void beforeSingletonCreation(String beanName) {
-		if (!this.inCreationCheckExclusions.contains(beanName) && !this.singletonsCurrentlyInCreation.add(beanName)) {
+		if (!this.inCreationCheckExclusions.contains(beanName) && !this.singletonsCurrentlyInCreation.add(beanName)) { // 创建阶段检查排除的bean集合 //当前正在创建的bean集合
 			throw new BeanCurrentlyInCreationException(beanName);
 		}
 	}

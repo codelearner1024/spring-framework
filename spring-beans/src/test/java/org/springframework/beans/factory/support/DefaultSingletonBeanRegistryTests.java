@@ -37,7 +37,6 @@ class DefaultSingletonBeanRegistryTests {
 
 	@Test
 	void singletons() {
-		AtomicBoolean tbFlag = new AtomicBoolean();
 
 		/*
 		 * 第二个参数设置一个回调函数，在注册单例对象时调用，用于在单例对象创建后进行一些额外的操作。
@@ -45,15 +44,16 @@ class DefaultSingletonBeanRegistryTests {
 		 * 这样，在后续的测试中，我们可以通过检查 tbFlag 的值来验证是否成功调用了回调函数。
 		 * instance是consumer实例
 		 */
-		beanRegistry.addSingletonCallback("tb", instance -> tbFlag.set(true));
-		TestBean tb = new TestBean();
+		AtomicBoolean tbFlag = new AtomicBoolean();
+		beanRegistry.addSingletonCallback("tb", instance -> tbFlag.set(true));//添加单例bean对应的回调函数
+		TestBean tb = new TestBean(); // 直接new一个作为单例bean
 		beanRegistry.registerSingleton("tb", tb);
 		assertThat(beanRegistry.getSingleton("tb")).isSameAs(tb);
 		assertThat(tbFlag.get()).isTrue();
 
 		AtomicBoolean tb2Flag = new AtomicBoolean();
 		beanRegistry.addSingletonCallback("tb2", instance -> tb2Flag.set(true));
-		TestBean tb2 = (TestBean) beanRegistry.getSingleton("tb2", TestBean::new);// 这里会调用TestBean的无参构造函数
+		TestBean tb2 = (TestBean) beanRegistry.getSingleton("tb2", TestBean::new);// 通过源码方法创建单例bean对象
 		assertThat(beanRegistry.getSingleton("tb2")).isSameAs(tb2);
 		assertThat(tb2Flag.get()).isTrue();
 
