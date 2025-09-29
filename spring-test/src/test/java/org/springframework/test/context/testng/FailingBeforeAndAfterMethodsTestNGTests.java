@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2025 the original author or authors.
+ * Copyright 2002-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,10 +64,10 @@ class FailingBeforeAndAfterMethodsTestNGTests {
 
 		String name = clazz.getSimpleName();
 
-		assertThat(listener.testStartCount).as("tests started for [" + name + "] ==> ").isEqualTo(expectedTestStartCount);
-		assertThat(listener.testSuccessCount).as("successful tests for [" + name + "] ==> ").isEqualTo(expectedTestSuccessCount);
-		assertThat(listener.testFailureCount).as("failed tests for [" + name + "] ==> ").isEqualTo(expectedFailureCount);
-		assertThat(listener.failedConfigurationsCount).as("failed configurations for [" + name + "] ==> ").isEqualTo(expectedFailedConfigurationsCount);
+		assertThat(listener.testStartCount.get()).as("tests started for [" + name + "] ==> ").isEqualTo(expectedTestStartCount);
+		assertThat(listener.testSuccessCount.get()).as("successful tests for [" + name + "] ==> ").isEqualTo(expectedTestSuccessCount);
+		assertThat(listener.testFailureCount.get()).as("failed tests for [" + name + "] ==> ").isEqualTo(expectedFailureCount);
+		assertThat(listener.failedConfigurationsCount.get()).as("failed configurations for [" + name + "] ==> ").isEqualTo(expectedFailedConfigurationsCount);
 	}
 
 	static List<Arguments> testData() {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2025 the original author or authors.
+ * Copyright 2002-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import java.util.regex.Pattern;
 
 import org.springframework.http.ResponseCookie;
 
-
 /**
  * Parser that delegates to {@link java.net.HttpCookie#parse(String)} for parsing,
  * but also extracts and sets {@code sameSite}.
@@ -39,6 +38,7 @@ final class JdkResponseCookieParser implements ResponseCookie.Parser {
 	/**
 	 * Parse the given headers.
 	 */
+	@Override
 	public List<ResponseCookie> parse(String header) {
 		Matcher matcher = SAME_SITE_PATTERN.matcher(header);
 		String sameSite = (matcher.matches() ? matcher.group(1) : null);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2025 the original author or authors.
+ * Copyright 2002-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -642,7 +642,7 @@ public class MockHttpServletResponse implements HttpServletResponse {
 		sendRedirect(url, HttpServletResponse.SC_MOVED_TEMPORARILY, true);
 	}
 
-	// @Override - on Servlet 6.1
+	@Override
 	public void sendRedirect(String url, int sc, boolean clearBuffer) throws IOException {
 		Assert.state(!isCommitted(), "Cannot send redirect - response is already committed");
 		Assert.notNull(url, "Redirect URL must not be null");

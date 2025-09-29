@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2025 the original author or authors.
+ * Copyright 2002-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,10 +71,10 @@ import org.springframework.web.socket.sockjs.support.AbstractSockJsService;
  */
 public class TransportHandlingSockJsService extends AbstractSockJsService implements SockJsServiceConfig, Lifecycle {
 
-	private static final boolean jacksonPresent = ClassUtils.isPresent(
+	private static final boolean JACKSON_PRESENT = ClassUtils.isPresent(
 			"tools.jackson.databind.ObjectMapper", TransportHandlingSockJsService.class.getClassLoader());
 
-	private static final boolean jackson2Present = ClassUtils.isPresent(
+	private static final boolean JACKSON_2_PRESENT = ClassUtils.isPresent(
 			"com.fasterxml.jackson.databind.ObjectMapper", TransportHandlingSockJsService.class.getClassLoader());
 
 
@@ -123,10 +123,10 @@ public class TransportHandlingSockJsService extends AbstractSockJsService implem
 			}
 		}
 
-		if (jacksonPresent) {
+		if (JACKSON_PRESENT) {
 			this.messageCodec = new JacksonJsonSockJsMessageCodec();
 		}
-		else if (jackson2Present) {
+		else if (JACKSON_2_PRESENT) {
 			this.messageCodec = new Jackson2SockJsMessageCodec();
 		}
 	}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2024 the original author or authors.
+ * Copyright 2002-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package org.springframework.core.io.buffer;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -223,9 +222,9 @@ public abstract class DataBufferUtils {
 
 		try {
 			if (resource.isFile()) {
-				File file = resource.getFile();
+				Path filePath = resource.getFilePath();
 				return readAsynchronousFileChannel(
-						() -> AsynchronousFileChannel.open(file.toPath(), StandardOpenOption.READ),
+						() -> AsynchronousFileChannel.open(filePath, StandardOpenOption.READ),
 						position, bufferFactory, bufferSize);
 			}
 		}
@@ -233,7 +232,7 @@ public abstract class DataBufferUtils {
 			// fallback to resource.readableChannel(), below
 		}
 		Flux<DataBuffer> result = readByteChannel(resource::readableChannel, bufferFactory, bufferSize);
-		return position == 0 ? result : skipUntilByteCount(result, position);
+		return (position == 0 ? result : skipUntilByteCount(result, position));
 	}
 
 

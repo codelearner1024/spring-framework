@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2024 the original author or authors.
+ * Copyright 2002-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,13 +37,13 @@ import org.springframework.util.ClassUtils;
  */
 public class SpringMockResolver implements MockResolver {
 
-	static final boolean springAopPresent = ClassUtils.isPresent(
+	static final boolean SPRING_AOP_PRESENT = ClassUtils.isPresent(
 			"org.springframework.aop.framework.Advised", SpringMockResolver.class.getClassLoader());
 
 
 	@Override
 	public Object resolve(Object instance) {
-		if (springAopPresent) {
+		if (SPRING_AOP_PRESENT) {
 			return getUltimateTargetObject(instance);
 		}
 		return instance;

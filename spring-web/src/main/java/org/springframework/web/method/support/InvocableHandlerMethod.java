@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2025 the original author or authors.
+ * Copyright 2002-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,6 +65,8 @@ public class InvocableHandlerMethod extends HandlerMethod {
 	private static final Object[] EMPTY_ARGS = new Object[0];
 
 	private static final Class<?>[] EMPTY_GROUPS = new Class<?>[0];
+
+	private static final boolean KOTLIN_REFLECT_PRESENT = KotlinDetector.isKotlinReflectPresent();
 
 
 	private HandlerMethodArgumentResolverComposite resolvers = new HandlerMethodArgumentResolverComposite();
@@ -217,6 +219,10 @@ public class InvocableHandlerMethod extends HandlerMethod {
 			if (args[i] != null) {
 				continue;
 			}
+			if (parameter.getParameterType().equals(HandlerMethod.class) && parameter.isOptional()) {
+				args[i] = null;
+				continue;
+			}
 			if (!this.resolvers.supportsParameter(parameter)) {
 				throw new IllegalStateException(formatArgumentError(parameter, "No suitable resolver"));
 			}
@@ -243,7 +249,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
 	protected @Nullable Object doInvoke(@Nullable Object... args) throws Exception {
 		Method method = getBridgedMethod();
 		try {
-			if (KotlinDetector.isKotlinType(method.getDeclaringClass())) {
+			if (KOTLIN_REFLECT_PRESENT && KotlinDetector.isKotlinType(method.getDeclaringClass())) {
 				if (KotlinDetector.isSuspendingFunction(method)) {
 					return invokeSuspendingFunction(method, getBean(), args);
 				}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2025 the original author or authors.
+ * Copyright 2002-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
-import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.SerializationFeature;
 import tools.jackson.databind.json.JsonMapper;
 
@@ -99,9 +98,9 @@ class JacksonJsonEncoderTests extends AbstractEncoderTests<JacksonJsonEncoder> {
 				new Pojo("foofoofoo", "barbarbar"));
 
 		testEncodeAll(input, ResolvableType.forClass(Pojo.class), APPLICATION_NDJSON, null, step -> step
-				.consumeNextWith(expectString("{\"bar\":\"bar\",\"foo\":\"foo\"}\n"))
-				.consumeNextWith(expectString("{\"bar\":\"barbar\",\"foo\":\"foofoo\"}\n"))
-				.consumeNextWith(expectString("{\"bar\":\"barbarbar\",\"foo\":\"foofoofoo\"}\n"))
+				.consumeNextWith(expectString("{\"foo\":\"foo\",\"bar\":\"bar\"}\n"))
+				.consumeNextWith(expectString("{\"foo\":\"foofoo\",\"bar\":\"barbar\"}\n"))
+				.consumeNextWith(expectString("{\"foo\":\"foofoofoo\",\"bar\":\"barbarbar\"}\n"))
 				.verifyComplete()
 		);
 	}
@@ -109,7 +108,7 @@ class JacksonJsonEncoderTests extends AbstractEncoderTests<JacksonJsonEncoder> {
 	@Test  // SPR-15866
 	public void canEncodeWithCustomMimeType() {
 		MimeType textJavascript = new MimeType("text", "javascript", StandardCharsets.UTF_8);
-		JacksonJsonEncoder encoder = new JacksonJsonEncoder(new ObjectMapper(), textJavascript);
+		JacksonJsonEncoder encoder = new JacksonJsonEncoder(new JsonMapper(), textJavascript);
 
 		assertThat(encoder.getEncodableMimeTypes()).isEqualTo(Collections.singletonList(textJavascript));
 	}
@@ -117,7 +116,7 @@ class JacksonJsonEncoderTests extends AbstractEncoderTests<JacksonJsonEncoder> {
 	@Test
 	void encodableMimeTypesIsImmutable() {
 		MimeType textJavascript = new MimeType("text", "javascript", StandardCharsets.UTF_8);
-		JacksonJsonEncoder encoder = new JacksonJsonEncoder(new ObjectMapper(), textJavascript);
+		JacksonJsonEncoder encoder = new JacksonJsonEncoder(new JsonMapper(), textJavascript);
 
 		assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() ->
 				encoder.getEncodableMimeTypes().add(new MimeType("text", "ecmascript")));
@@ -138,9 +137,9 @@ class JacksonJsonEncoderTests extends AbstractEncoderTests<JacksonJsonEncoder> {
 		);
 
 		testEncode(input, Pojo.class, step -> step
-				.consumeNextWith(expectString("[{\"bar\":\"bar\",\"foo\":\"foo\"}"))
-				.consumeNextWith(expectString(",{\"bar\":\"barbar\",\"foo\":\"foofoo\"}"))
-				.consumeNextWith(expectString(",{\"bar\":\"barbarbar\",\"foo\":\"foofoofoo\"}"))
+				.consumeNextWith(expectString("[{\"foo\":\"foo\",\"bar\":\"bar\"}"))
+				.consumeNextWith(expectString(",{\"foo\":\"foofoo\",\"bar\":\"barbar\"}"))
+				.consumeNextWith(expectString(",{\"foo\":\"foofoofoo\",\"bar\":\"barbarbar\"}"))
 				.consumeNextWith(expectString("]"))
 				.verifyComplete());
 	}
@@ -188,9 +187,9 @@ class JacksonJsonEncoderTests extends AbstractEncoderTests<JacksonJsonEncoder> {
 		);
 
 		testEncode(input, ResolvableType.forClass(Pojo.class), barMediaType, null, step -> step
-				.consumeNextWith(expectString("{\"bar\":\"bar\",\"foo\":\"foo\"}\n"))
-				.consumeNextWith(expectString("{\"bar\":\"barbar\",\"foo\":\"foofoo\"}\n"))
-				.consumeNextWith(expectString("{\"bar\":\"barbarbar\",\"foo\":\"foofoofoo\"}\n"))
+				.consumeNextWith(expectString("{\"foo\":\"foo\",\"bar\":\"bar\"}\n"))
+				.consumeNextWith(expectString("{\"foo\":\"foofoo\",\"bar\":\"barbar\"}\n"))
+				.consumeNextWith(expectString("{\"foo\":\"foofoofoo\",\"bar\":\"barbarbar\"}\n"))
 				.verifyComplete()
 		);
 	}
@@ -231,14 +230,14 @@ class JacksonJsonEncoderTests extends AbstractEncoderTests<JacksonJsonEncoder> {
 
 	@Test  // gh-22771
 	public void encodeWithFlushAfterWriteOff() {
-		ObjectMapper mapper = JsonMapper.builder().configure(SerializationFeature.FLUSH_AFTER_WRITE_VALUE, false).build();
+		JsonMapper mapper = JsonMapper.builder().configure(SerializationFeature.FLUSH_AFTER_WRITE_VALUE, false).build();
 		JacksonJsonEncoder encoder = new JacksonJsonEncoder(mapper);
 
 		Flux<DataBuffer> result = encoder.encode(Flux.just(new Pojo("foo", "bar")), this.bufferFactory,
 				ResolvableType.forClass(Pojo.class), MimeTypeUtils.APPLICATION_JSON, Collections.emptyMap());
 
 		StepVerifier.create(result)
-				.consumeNextWith(expectString("[{\"bar\":\"bar\",\"foo\":\"foo\"}"))
+				.consumeNextWith(expectString("[{\"foo\":\"foo\",\"bar\":\"bar\"}"))
 				.consumeNextWith(expectString("]"))
 				.expectComplete()
 				.verify(Duration.ofSeconds(5));
@@ -250,7 +249,7 @@ class JacksonJsonEncoderTests extends AbstractEncoderTests<JacksonJsonEncoder> {
 		MimeType mimeType = new MimeType("application", "json", StandardCharsets.US_ASCII);
 
 		testEncode(input, ResolvableType.forClass(Pojo.class), mimeType, null, step -> step
-				.consumeNextWith(expectString("{\"bar\":\"bar\",\"foo\":\"foo\"}"))
+				.consumeNextWith(expectString("{\"foo\":\"foo\",\"bar\":\"bar\"}"))
 				.verifyComplete()
 		);
 	}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2025 the original author or authors.
+ * Copyright 2002-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -418,9 +418,9 @@ public class ClassPathScanningCandidateComponentProvider implements EnvironmentC
 	private Set<BeanDefinition> scanCandidateComponents(String basePackage) {
 		Set<BeanDefinition> candidates = new LinkedHashSet<>();
 		try {
-			String packageSearchPath = ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX +
+			String packageSearchPattern = ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX +
 					resolveBasePackage(basePackage) + '/' + this.resourcePattern;
-			Resource[] resources = getResourcePatternResolver().getResources(packageSearchPath);
+			Resource[] resources = getResourcePatternResolver().getResources(packageSearchPattern);
 			boolean traceEnabled = logger.isTraceEnabled();
 			boolean debugEnabled = logger.isDebugEnabled();
 			for (Resource resource : resources) {

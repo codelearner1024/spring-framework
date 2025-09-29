@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2024 the original author or authors.
+ * Copyright 2002-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,7 +72,7 @@ final class SubscriberInputStream extends InputStream implements Subscriber<Data
 
 	private final Queue<DataBuffer> queue;
 
-	private final AtomicReference<Object> parkedThread = new AtomicReference<>();
+	private final AtomicReference<@Nullable Object> parkedThread = new AtomicReference<>();
 
 	private final AtomicInteger workAmount = new AtomicInteger();
 

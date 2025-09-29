@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2025 the original author or authors.
+ * Copyright 2002-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ public class ApiVersionTests {
 
 	@Test
 	void header() {
-		String header = "X-API-Version";
+		String header = "API-Version";
 
 		Map<String, String> result = performRequest(
 				configurer -> configurer.useRequestHeader(header),
@@ -54,7 +54,7 @@ public class ApiVersionTests {
 		String param = "api-version";
 
 		Map<String, String> result = performRequest(
-				configurer -> configurer.useRequestParam(param),
+				configurer -> configurer.useQueryParam(param),
 				ApiVersionInserter.useQueryParam(param));
 
 		assertThat(result.get("query")).isEqualTo(param + "=1.2");
@@ -92,7 +92,7 @@ public class ApiVersionTests {
 	@RestController
 	static class TestController {
 
-		private static final String HEADER = "X-API-Version";
+		private static final String HEADER = "API-Version";
 
 		@GetMapping(path = "/**", version = "1.2")
 		Map<String, String> handle(ServerHttpRequest request) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2025 the original author or authors.
+ * Copyright 2002-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,6 +65,8 @@ import org.springframework.util.ObjectUtils;
 public class MethodParameter {
 
 	private static final Annotation[] EMPTY_ANNOTATION_ARRAY = new Annotation[0];
+
+	private static final boolean KOTLIN_REFLECT_PRESENT = KotlinDetector.isKotlinReflectPresent();
 
 
 	private final Executable executable;
@@ -264,9 +266,9 @@ public class MethodParameter {
 	/**
 	 * Increase this parameter's nesting level.
 	 * @see #getNestingLevel()
-	 * @deprecated since 5.2 in favor of {@link #nested(Integer)}
+	 * @deprecated in favor of {@link #nested(Integer)}
 	 */
-	@Deprecated
+	@Deprecated(since = "5.2")
 	public void increaseNestingLevel() {
 		this.nestingLevel++;
 	}
@@ -274,10 +276,10 @@ public class MethodParameter {
 	/**
 	 * Decrease this parameter's nesting level.
 	 * @see #getNestingLevel()
-	 * @deprecated since 5.2 in favor of retaining the original MethodParameter and
+	 * @deprecated in favor of retaining the original MethodParameter and
 	 * using {@link #nested(Integer)} if nesting is required
 	 */
-	@Deprecated
+	@Deprecated(since = "5.2")
 	public void decreaseNestingLevel() {
 		getTypeIndexesPerLevel().remove(this.nestingLevel);
 		this.nestingLevel--;
@@ -307,9 +309,9 @@ public class MethodParameter {
 	 * @param typeIndex the corresponding type index
 	 * (or {@code null} for the default type index)
 	 * @see #getNestingLevel()
-	 * @deprecated since 5.2 in favor of {@link #withTypeIndex}
+	 * @deprecated in favor of {@link #withTypeIndex}
 	 */
-	@Deprecated
+	@Deprecated(since = "5.2")
 	public void setTypeIndexForCurrentLevel(int typeIndex) {
 		getTypeIndexesPerLevel().put(this.nestingLevel, typeIndex);
 	}
@@ -396,7 +398,8 @@ public class MethodParameter {
 	 */
 	public boolean isOptional() {
 		return (getParameterType() == Optional.class || Nullness.forMethodParameter(this) == Nullness.NULLABLE ||
-				(KotlinDetector.isKotlinType(getContainingClass()) && KotlinDelegate.isOptional(this)));
+				(KOTLIN_REFLECT_PRESENT && KotlinDetector.isKotlinType(getContainingClass()) &&
+						KotlinDelegate.isOptional(this)));
 	}
 
 	/**
@@ -429,7 +432,7 @@ public class MethodParameter {
 	/**
 	 * Set a containing class to resolve the parameter type against.
 	 */
-	@Deprecated
+	@Deprecated(since = "5.2")
 	void setContainingClass(Class<?> containingClass) {
 		this.containingClass = containingClass;
 		this.parameterType = null;
@@ -449,7 +452,7 @@ public class MethodParameter {
 	/**
 	 * Set a resolved (generic) parameter type.
 	 */
-	@Deprecated
+	@Deprecated(since = "5.2")
 	void setParameterType(@Nullable Class<?> parameterType) {
 		this.parameterType = parameterType;
 	}
@@ -484,7 +487,7 @@ public class MethodParameter {
 			if (this.parameterIndex < 0) {
 				Method method = getMethod();
 				paramType = (method != null ?
-						(KotlinDetector.isKotlinType(getContainingClass()) ?
+						(KOTLIN_REFLECT_PRESENT && KotlinDetector.isKotlinType(getContainingClass()) ?
 								KotlinDelegate.getGenericReturnType(method) : method.getGenericReturnType()) : void.class);
 			}
 			else {
@@ -512,7 +515,7 @@ public class MethodParameter {
 			if (method == null) {
 				return void.class;
 			}
-			if (KotlinDetector.isKotlinType(getContainingClass())) {
+			if (KOTLIN_REFLECT_PRESENT && KotlinDetector.isKotlinType(getContainingClass())) {
 				return KotlinDelegate.getReturnType(method);
 			}
 			return method.getReturnType();
@@ -758,9 +761,9 @@ public class MethodParameter {
 	 * @param methodOrConstructor the Method or Constructor to specify a parameter for
 	 * @param parameterIndex the index of the parameter
 	 * @return the corresponding MethodParameter instance
-	 * @deprecated as of 5.0, in favor of {@link #forExecutable}
+	 * @deprecated in favor of {@link #forExecutable}
 	 */
-	@Deprecated
+	@Deprecated(since = "5.0")
 	public static MethodParameter forMethodOrConstructor(Object methodOrConstructor, int parameterIndex) {
 		if (!(methodOrConstructor instanceof Executable executable)) {
 			throw new IllegalArgumentException(

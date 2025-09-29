@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2024 the original author or authors.
+ * Copyright 2002-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,12 +68,12 @@ import org.springframework.util.ReflectionUtils;
 @SuppressWarnings("unchecked")
 class PersistenceManagedTypesBeanRegistrationAotProcessor implements BeanRegistrationAotProcessor {
 
-	private static final boolean jpaPresent = ClassUtils.isPresent("jakarta.persistence.Entity",
+	private static final boolean JPA_PRESENT = ClassUtils.isPresent("jakarta.persistence.Entity",
 			PersistenceManagedTypesBeanRegistrationAotProcessor.class.getClassLoader());
 
 	@Override
 	public @Nullable BeanRegistrationAotContribution processAheadOfTime(RegisteredBean registeredBean) {
-		if (jpaPresent) {
+		if (JPA_PRESENT) {
 			if (PersistenceManagedTypes.class.isAssignableFrom(registeredBean.getBeanClass())) {
 				return BeanRegistrationAotContribution.withCustomCodeFragments(codeFragments ->
 						new JpaManagedTypesBeanRegistrationCodeFragments(codeFragments, registeredBean));

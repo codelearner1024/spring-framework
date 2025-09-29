@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2023 the original author or authors.
+ * Copyright 2002-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.springframework.util;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.AbstractCollection;
 import java.util.AbstractSet;
@@ -47,8 +48,11 @@ import org.jspecify.annotations.Nullable;
  * @since 3.0
  * @param <V> the value type
  */
-@SuppressWarnings("serial")
 public class LinkedCaseInsensitiveMap<V> implements Map<String, V>, Serializable, Cloneable {
+
+	@Serial
+	private static final long serialVersionUID = -1797561627545787622L;
+
 
 	private final LinkedHashMap<String, V> targetMap;
 

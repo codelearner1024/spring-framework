@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2025 the original author or authors.
+ * Copyright 2002-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -94,7 +94,7 @@ import org.springframework.validation.Validator;
 public class SimpAnnotationMethodMessageHandler extends AbstractMethodMessageHandler<SimpMessageMappingInfo>
 		implements EmbeddedValueResolverAware, SmartLifecycle {
 
-	private static final boolean reactorPresent = ClassUtils.isPresent(
+	private static final boolean REACTOR_PRESENT = ClassUtils.isPresent(
 			"reactor.core.publisher.Flux", SimpAnnotationMethodMessageHandler.class.getClassLoader());
 
 
@@ -344,7 +344,7 @@ public class SimpAnnotationMethodMessageHandler extends AbstractMethodMessageHan
 		// Single-purpose return value types
 
 		handlers.add(new CompletableFutureReturnValueHandler());
-		if (reactorPresent) {
+		if (REACTOR_PRESENT) {
 			handlers.add(new ReactiveReturnValueHandler());
 		}
 

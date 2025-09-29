@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2023 the original author or authors.
+ * Copyright 2002-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,8 +35,11 @@ package org.springframework.core;
  */
 public class DefaultParameterNameDiscoverer extends PrioritizedParameterNameDiscoverer {
 
+	private static final boolean KOTLIN_REFLECT_PRESENT = KotlinDetector.isKotlinReflectPresent();
+
+
 	public DefaultParameterNameDiscoverer() {
-		if (KotlinDetector.isKotlinReflectPresent()) {
+		if (KOTLIN_REFLECT_PRESENT) {
 			addDiscoverer(new KotlinReflectionParameterNameDiscoverer());
 		}
 

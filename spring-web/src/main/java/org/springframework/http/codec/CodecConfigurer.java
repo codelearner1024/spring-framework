@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2025 the original author or authors.
+ * Copyright 2002-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -141,6 +141,20 @@ public interface CodecConfigurer {
 		 * @see org.springframework.http.codec.json.Jackson2JsonEncoder
 		 */
 		void jackson2JsonEncoder(Encoder<?> encoder);
+
+		/**
+		 * Override the default Gson {@code Decoder}.
+		 * @param decoder the decoder instance to use
+		 * @see org.springframework.http.codec.json.GsonDecoder
+		 */
+		void gsonDecoder(Decoder<?> decoder);
+
+		/**
+		 * Override the default Gson {@code Encoder}.
+		 * @param encoder the encoder instance to use
+		 * @see org.springframework.http.codec.json.GsonEncoder
+		 */
+		void gsonEncoder(Encoder<?> encoder);
 
 		/**
 		 * Override the default Jackson 3.x Smile {@code Decoder}.

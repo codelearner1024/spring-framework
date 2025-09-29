@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2025 the original author or authors.
+ * Copyright 2002-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ import org.springframework.util.Assert;
  * @since 5.1
  * @param <T> the type of results supplied by this supplier
  */
-public class SingletonSupplier<T> implements Supplier<@Nullable T> {
+public class SingletonSupplier<T extends @Nullable Object> implements Supplier<T> {
 
 	private final @Nullable Supplier<? extends @Nullable T> instanceSupplier;
 

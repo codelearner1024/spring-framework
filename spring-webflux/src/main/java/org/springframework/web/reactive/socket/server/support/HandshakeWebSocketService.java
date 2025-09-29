@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2025 the original author or authors.
+ * Copyright 2002-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,6 @@ import org.springframework.web.reactive.socket.server.upgrade.JettyCoreRequestUp
 import org.springframework.web.reactive.socket.server.upgrade.JettyRequestUpgradeStrategy;
 import org.springframework.web.reactive.socket.server.upgrade.ReactorNettyRequestUpgradeStrategy;
 import org.springframework.web.reactive.socket.server.upgrade.StandardWebSocketUpgradeStrategy;
-import org.springframework.web.reactive.socket.server.upgrade.UndertowRequestUpgradeStrategy;
 import org.springframework.web.server.MethodNotAllowedException;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.ServerWebInputException;
@@ -75,23 +74,19 @@ public class HandshakeWebSocketService implements WebSocketService, Lifecycle {
 	private static final Mono<Map<String, Object>> EMPTY_ATTRIBUTES = Mono.just(Collections.emptyMap());
 
 
-	private static final boolean jettyWsPresent;
+	private static final boolean JETTY_WS_PRESENT;
 
-	private static final boolean jettyCoreWsPresent;
+	private static final boolean JETTY_CORE_WS_PRESENT;
 
-	private static final boolean undertowWsPresent;
-
-	private static final boolean reactorNettyPresent;
+	private static final boolean REACTOR_NETTY_PRESENT;
 
 	static {
 		ClassLoader classLoader = HandshakeWebSocketService.class.getClassLoader();
-		jettyWsPresent = ClassUtils.isPresent(
+		JETTY_WS_PRESENT = ClassUtils.isPresent(
 				"org.eclipse.jetty.ee11.websocket.server.JettyWebSocketServerContainer", classLoader);
-		jettyCoreWsPresent = ClassUtils.isPresent(
+		JETTY_CORE_WS_PRESENT = ClassUtils.isPresent(
 				"org.eclipse.jetty.websocket.server.ServerWebSocketContainer", classLoader);
-		undertowWsPresent = ClassUtils.isPresent(
-				"io.undertow.websockets.WebSocketProtocolHandshakeHandler", classLoader);
-		reactorNettyPresent = ClassUtils.isPresent(
+		REACTOR_NETTY_PRESENT = ClassUtils.isPresent(
 				"reactor.netty.http.server.HttpServerResponse", classLoader);
 	}
 
@@ -270,16 +265,13 @@ public class HandshakeWebSocketService implements WebSocketService, Lifecycle {
 
 
 	static RequestUpgradeStrategy initUpgradeStrategy() {
-		if (jettyWsPresent) {
+		if (JETTY_WS_PRESENT) {
 			return new JettyRequestUpgradeStrategy();
 		}
-		else if (jettyCoreWsPresent) {
+		else if (JETTY_CORE_WS_PRESENT) {
 			return new JettyCoreRequestUpgradeStrategy();
 		}
-		else if (undertowWsPresent) {
-			return new UndertowRequestUpgradeStrategy();
-		}
-		else if (reactorNettyPresent) {
+		else if (REACTOR_NETTY_PRESENT) {
 			return new ReactorNettyRequestUpgradeStrategy();
 		}
 		else {
